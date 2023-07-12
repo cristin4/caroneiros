@@ -9,13 +9,14 @@ def menu(n):
               "2 - Editar Usuário\n" +
               "3 - Excluir Usuário\n" +
               "4 - Listar Usuários\n" +
-              "5 - Oferecer Carona\n" +
-              "6 - Procurar Carona\n" +
-              "7 - Sugerir  Carona\n" +
-              "8 - Histórico de Caronas\n" +
-              "9 - Avaliação de perfil\n" +
-              "10 - Valor Extra\n" +
-              "11 - Painel DEBUG\n" +  # Para Debug
+              "5 - Adicionar dinheiro na carteira\n"
+              "6 - Oferecer Carona\n" +
+              "7 - Procurar Carona\n" +
+              "8 - Sugerir  Carona\n" +
+              "9 - Histórico de Caronas\n" +
+              "10 - Avaliação de perfil\n" +
+              "11 - Valor Extra\n" +
+              "12 - Painel DEBUG\n" +  # Para Debug
               "0 - Sair")
 
         option = int(input())
@@ -36,26 +37,29 @@ def menu(n):
         elif option == 4:
             print("Listagem de usuários:")
             users.list_users(usuarios)
-
         elif option == 5:
-            print("Procurar/sugerir  Carona")
+            print("Adicionar dinheiro na carteira")
+            users.wallet(usuarios)
 
         elif option == 6:
-            print("Oferecer carona")
+            print("Procurar/sugerir  Carona")
 
         elif option == 7:
-            print("Adicionar relacionamento")
+            print("Oferecer carona")
 
         elif option == 8:
-            print("Histórico de viagens")
+            print("Adicionar relacionamento")
 
         elif option == 9:
-            print("Sistema de avaliação de perfil")
+            print("Histórico de viagens")
 
         elif option == 10:
-            print("Valor Extra")
+            print("Sistema de avaliação de perfil")
 
         elif option == 11:
+            print("Valor Extra")
+
+        elif option == 12:
             print("PAINEL DEBUG")
             utils.adm(usuarios)
 

@@ -8,11 +8,12 @@ Função | Título | Status
 2 | Editar Usuário | ✅
 3 | Excluir Usuário | ✅
 4 | Listar Usuários | ✅
-5 | Oferecer Carona | ❌
-6 | Procurar Carona | ❌
-7 | Sugerir Carona | ❌
-8 | Histórico de Caronas | ❌
-9 | Avaliação de perfil | ❌
-10 | Valor Extra | ❌
-11 | Painel DEBUG (Temporário) | 💻
+5 | Inserir dinheiro na carteira | ✅  
+6 | Oferecer Carona | ❌
+7 | Procurar Carona | ❌
+8 | Sugerir Carona | ❌
+9 | Histórico de Caronas | ❌
+10 | Avaliação de perfil | ❌
+11 | Valor Extra | ❌
+12 | Painel DEBUG (Temporário) | 💻
 0 | Sair | ✅
