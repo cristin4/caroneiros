@@ -4,7 +4,7 @@ import getpass
 def create(usuarios):
     email = input("Informe um email: ")
     cpf = input("Informe um cpf: ")
-    name = input(" Defina um nome de usuário: ")
+    name = input("Defina um nome de usuário: ")
     password = input("Defina uma senha de usuário: ")
     confirmation = input("Deseja adicionar dinheiro a carteira? [S/N] ")
     confirmation.lower()
@@ -35,13 +35,13 @@ def create(usuarios):
                         "modelo": car_model,
                         "cor": color,
                         "placa": plate
-                    }
+                        }
                     }
     usuarios[cpf] = novo_usuario
-
-    print("-" * 30)
-    print('CONTA CRIADA COM SUCESSO!')
-    print("-" * 30)
+    msg = 'CONTA CRIADA COM SUCESSO!'
+    print("-" * len(msg))
+    print(msg)
+    print("-" * len(msg))
 
 
 def edit(usuarios):

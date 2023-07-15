@@ -1,27 +1,29 @@
 import users
 import utils
 
-
 def menu(n):
+
     usuarios = {}
+
     while n:
-        print("1 - Criar Usuário\n" +
-              "2 - Editar Usuário\n" +
-              "3 - Excluir Usuário\n" +
-              "4 - Listar Usuários\n" +
-              "5 - Adicionar dinheiro na carteira\n"
-              "6 - Oferecer Carona\n" +
-              "7 - Procurar Carona\n" +
-              "8 - Sugerir  Carona\n" +
-              "9 - Histórico de Caronas\n" +
-              "10 - Avaliação de perfil\n" +
-              "11 - Valor Extra\n" +
-              "12 - Painel DEBUG\n" +  # Para Debug
-              "0 - Sair")
+        print('01 - Criar Usuário',
+              '02 - Editar Usuário',
+              '03 - Excluir Usuário',
+              '04 - Listar Usuários',
+              '05 - Adicionar dinheiro na carteira',
+              '06 - Oferecer Carona',
+              '07 - Procurar Carona',
+              '08 - Sugerir  Carona',
+              '09 - Histórico de Caronas',
+              '10 - Avaliação de perfil',
+              '11 - Valor Extra',
+              '12 - Painel DEBUG', # Debug
+              '00 - Sair', sep='\n')
 
         option = int(input())
+
         if option == 0:
-            n = 0
+            n = False
         elif option == 1:
             print("Criação de Usuário")
             users.create(usuarios)
