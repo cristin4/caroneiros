@@ -1,9 +1,5 @@
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+.idea/*
 
 # Local history for Visual Studio Code
 .history/
@@ -12,7 +8,7 @@
 *.vsix
 
 # byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__/*
 *.py[cod]
 
 # others
