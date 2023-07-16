@@ -42,7 +42,7 @@ def menu(n):
             users.list_users(usuarios)
         elif option == 5:
             print("Adicionar dinheiro na carteira")
-            users.wallet(usuarios)
+            users.add_money(usuarios)
 
         elif option == 6:
             print("Oferecer carona")

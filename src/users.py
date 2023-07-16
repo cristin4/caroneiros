@@ -76,7 +76,7 @@ def edit(usuarios):
         print("Operação cancelada!")
 
 
-def wallet(usuarios):
+def add_money(usuarios):
     print("Informe o CPF da conta  que deseja que seja adicionado dinheiro a carteira: ")
     cpf = input()
     print(f'CPF: {cpf}\n')
