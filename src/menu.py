@@ -1,10 +1,11 @@
+import rides
 import users
 import utils
 
+
 def menu(n):
-
     usuarios = {}
-
+    caronas = {}
     while n:
         print('01 - Criar Usuário',
               '02 - Editar Usuário',
@@ -17,7 +18,7 @@ def menu(n):
               '09 - Histórico de Caronas',
               '10 - Avaliação de perfil',
               '11 - Valor Extra',
-              '12 - Painel DEBUG', # Debug
+              '12 - Painel DEBUG',  # Debug
               '00 - Sair', sep='\n')
 
         option = int(input())
@@ -44,13 +45,15 @@ def menu(n):
             users.wallet(usuarios)
 
         elif option == 6:
-            print("Procurar/sugerir  Carona")
+            print("Oferecer carona")
+            rides.offer_ride(caronas, usuarios)
 
         elif option == 7:
-            print("Oferecer carona")
+            print("Procurar  Carona")
+            rides.search_ride(caronas)
 
         elif option == 8:
-            print("Adicionar relacionamento")
+            print("Sugerir  Carona")
 
         elif option == 9:
             print("Histórico de viagens")
