@@ -31,11 +31,12 @@ def create(usuarios):
                     "nome": name,
                     "senha": password,
                     "carteira": money,
+                    "historico": {},
                     "carro": {
                         "modelo": car_model,
                         "cor": color,
                         "placa": plate
-                        }
+                    }
                     }
     usuarios[cpf] = novo_usuario
     msg = 'CONTA CRIADA COM SUCESSO!'
@@ -76,9 +77,17 @@ def edit(usuarios):
         print("Operação cancelada!")
 
 
+def get_rides(usuarios):
+    cpf = input("Informe o CPF da conta que deseja consultar o histórico de caronas: ")
+
+    try:
+        print(usuarios[cpf]['historico'])
+    except KeyError:
+        print("Este usuário não possui nenhuma corrida realizada!")
+
+
 def add_money(usuarios):
-    print("Informe o CPF da conta  que deseja que seja adicionado dinheiro a carteira: ")
-    cpf = input()
+    cpf = input("Informe o CPF da conta  que deseja que seja adicionado dinheiro a carteira: ")
     print(f'CPF: {cpf}\n')
     print("Dados do usuário:")
     print("E-mail: " + usuarios[cpf]["email"])
@@ -88,12 +97,39 @@ def add_money(usuarios):
     confirm = input(
         value + " reais será adicionado na carteira do(a) " + str(usuarios[cpf]["nome"]) + "\nTem certeza? [S/N]")
     confirm.lower()
-    if confirm == "s":
 
+    if confirm == "s":
         usuarios[cpf]["carteira"] += float(value)
         print("Dinheiro adicionado com sucesso!")
     else:
         print("Operação cancelada!")
+
+
+def tip_user(caronas, usuarios):
+    cpf = input("Digite o CPF da conta: ")
+
+    id_ultima_carona = max(usuarios[cpf]['historico'].keys())
+
+    print("Última carona: ")
+    print(usuarios[cpf]['historico'][id_ultima_carona])
+
+    gorjeta = input("Gostaria de enviar um valor extra ao motorista? [S/N]")
+
+    gorjeta.lower()
+
+    if gorjeta == 'n':
+        print("Certo, abortando operação...")
+        return
+    elif gorjeta == 's':
+        valor = float(input("Insira o valor extra a ser enviado da sua carteira: "))
+
+        if usuarios[cpf]['carteira'] >= valor:
+            print("Enviando valor para o motorista...")
+            usuarios[cpf]['carteira'] -= valor
+            usuarios[caronas[id_ultima_carona]['cpf']]['carteira'] += valor
+        else:
+            print("Valor na carteira insuficiente! Adicione mais fundos e tente novamente!")
+            return
 
 
 def delete(usuarios):
