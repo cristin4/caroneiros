@@ -1,21 +1,22 @@
 import getpass
 
 
+# ----------------------- Criar usuário ----------------------- #
 def create(usuarios):
     email = input("Informe um email: ")
     cpf = input("Informe um cpf: ")
     name = input("Defina um nome de usuário: ")
     password = input("Defina uma senha de usuário: ")
     confirmation = input("Deseja adicionar dinheiro a carteira? [S/N] ")
-    confirmation.lower()
+    confirmation = confirmation.lower()
 
     if confirmation == "s":
         money = float(input("Quanto gostaria de adicionar? "))
     else:
         money = 0
 
-    option = input("Gostaria de adicionar um carro? [S/N]")
-    option.lower()
+    option = input("Gostaria de adicionar um carro? [S/N] ")
+    option = option.lower()
 
     if option == "s":
         car_model = input("Modelo do carro: ")
@@ -45,6 +46,7 @@ def create(usuarios):
     print("-" * len(msg))
 
 
+# ----------------------- Editar usuário ----------------------- #
 def edit(usuarios):
     print("Informe o CPF da conta a ser editado: ")
     cpf = input()
@@ -56,7 +58,7 @@ def edit(usuarios):
     print("Para alterar a senha, digite 'senha'")
 
     option = input("Qual dado gostaria de alterar? ")
-    option.lower()
+    option = option.lower()
     if option == "carro":
         model = input("Digite o novo modelo: ")
         color = input("Digite a nova cor:")
@@ -69,7 +71,7 @@ def edit(usuarios):
     else:
         new_value = input("Digite o novo " + option + ":")
     confirm = input("O " + option + " será alterado para " + str(new_value) + "\nTem certeza? [S/N]")
-    confirm.lower()
+    confirm = confirm.lower()
     if confirm == "s":
         usuarios[cpf][option] = new_value
         print("Dado alterado com sucesso!")
@@ -77,6 +79,7 @@ def edit(usuarios):
         print("Operação cancelada!")
 
 
+# ----------------------- Historico de caronas ----------------------- #
 def get_rides(usuarios):
     cpf = input("Informe o CPF da conta que deseja consultar o histórico de caronas: ")
 
@@ -86,6 +89,7 @@ def get_rides(usuarios):
         print("Este usuário não possui nenhuma corrida realizada!")
 
 
+# ----------------------- Adicionar valor na carteira ----------------------- #
 def add_money(usuarios):
     cpf = input("Informe o CPF da conta  que deseja que seja adicionado dinheiro a carteira: ")
     print(f'CPF: {cpf}\n')
@@ -96,7 +100,7 @@ def add_money(usuarios):
     value = input("Quanto dinheiro gostaria de adicionar? ")
     confirm = input(
         value + " reais será adicionado na carteira do(a) " + str(usuarios[cpf]["nome"]) + "\nTem certeza? [S/N]")
-    confirm.lower()
+    confirm = confirm.lower()
 
     if confirm == "s":
         usuarios[cpf]["carteira"] += float(value)
@@ -105,6 +109,7 @@ def add_money(usuarios):
         print("Operação cancelada!")
 
 
+# ----------------------- Adicionar valor extra ----------------------- #
 def tip_user(caronas, usuarios):
     cpf = input("Digite o CPF da conta: ")
 
@@ -115,7 +120,7 @@ def tip_user(caronas, usuarios):
 
     gorjeta = input("Gostaria de enviar um valor extra ao motorista? [S/N]")
 
-    gorjeta.lower()
+    gorjeta = gorjeta = gorjeta.lower()
 
     if gorjeta == 'n':
         print("Certo, abortando operação...")
@@ -132,6 +137,7 @@ def tip_user(caronas, usuarios):
             return
 
 
+# ----------------------- Deletar usuários ----------------------- #
 def delete(usuarios):
     try:
         print("Informe o CPF da conta a ser removida: ")
@@ -140,7 +146,7 @@ def delete(usuarios):
               "Nome: " + usuarios[cpf]["nome"])
         print("Tem certeza que deseja remover? ")
         option = input()
-        option.lower()
+        option = option.lower()
         if option == "s":
             usuarios.pop(cpf)
             print("Usuário removido com sucesso!")
@@ -150,6 +156,7 @@ def delete(usuarios):
         print("CPF inválido!")
 
 
+# ----------------------- Listar usuários ----------------------- #
 def list_users(usuarios):
     for key in usuarios.keys():
         print(f'CPF: {key}\n')

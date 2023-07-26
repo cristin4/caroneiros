@@ -6,7 +6,10 @@ import utils
 def menu(n):
     usuarios = {}
     caronas = {}
+    caronas_sugeridas = {}
     id_carona = 0
+    quant_avaliacao = 0
+    quant_usuarios = 0
     while n:
         print('1 - Criar Usuário',
               '2 - Editar Usuário',
@@ -48,23 +51,33 @@ def menu(n):
 
         elif option == 6:
             print("Oferecer carona")
-            id_carona += 1
-            rides.offer_ride(caronas, usuarios, id_carona)
+            confirm = input("Gostaria de ver as caronas sugeridas?[S/N] ")
+            confirm = confirm.lower()
 
+            if confirm == 's':
+                rides.confirm_ride(caronas_sugeridas, caronas, usuarios)
+            elif confirm == 'n':
+                print("Continue oferencedo a carona")
+                id_carona += 1
+                rides.offer_ride(caronas, usuarios, id_carona, quant_avaliacao, quant_usuarios)
+            else:
+                option = -1
         elif option == 7:
             print("Procurar  Carona")
             rides.search_ride(caronas, usuarios)
 
-        # Vale a pena?
         elif option == 8:
             print("Sugerir  Carona")
+            id_carona += 1
+            rides.suggested_ride(caronas_sugeridas, id_carona)
 
         elif option == 9:
             print("Histórico de viagens")
             users.get_rides(usuarios)
         elif option == 10:
             print("Avaliação de caronas")
-            rides.rate_ride(usuarios)
+            quant_avaliacao += 1
+            rides.rate_ride(usuarios, quant_avaliacao, caronas)
         elif option == 11:
             print("Enviar valor extra pela carteira")
             users.tip_user(caronas, usuarios)
