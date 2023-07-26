@@ -14,4 +14,5 @@ __pycache__/*
 *.py[cod]
 
 # others
-gmr82.py
+#gmr82.py
+*.json
