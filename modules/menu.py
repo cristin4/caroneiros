@@ -1,12 +1,25 @@
 '''módulo de menu'''
+
 # ═║╔╗╚╝╠╣╦╩╬
 # ─│┌┐└┘├┤┬┴┼
 # ─║╓╖╙╜╟╢╥╨╫
 
 
-def red(string):
+def dye(string, color=None):
     '''colore a string'''
-    return '\033[31m' + string + '\033[0;0m'
+    ansicolors = {
+        'black': '\33[0;30m',
+        'red': '\33[0;31m',
+        'green': '\33[0;32m',
+        'yellow': '\33[0;33m',
+        'blue': '\33[0;34m',
+        'purple': '\33[0;35m',
+        'cyan': '\33[0;36m',
+        'white': '\33[0;37m',
+        None: ''}
+
+    return ansicolors[color] + string + '\033[0;0m'
+
 
 class Menu:
     '''rascunho da classe menu'''
@@ -16,9 +29,9 @@ class Menu:
         self.options = options
         self.start = start
         self.longest_string_len = len(self.header)
-        self.void_menu = self.options is None
+        self.is_a_void_menu = self.options is None
 
-        if not self.void_menu:
+        if not self.is_a_void_menu:
             self.longest_string_len = len(
                 max(list(self.options.keys()), key=len))
             if len(self.header) > self.longest_string_len:
@@ -32,7 +45,7 @@ class Menu:
               f'│{self.header: ^{width}}│',
               f'├{"":─^{width}}┤', sep='\n')
 
-        if self.void_menu:
+        if self.is_a_void_menu:
             print(f'│{"∅":^{width}}│')
             print(f'└{"":═^{width}}┘')
         else:
@@ -41,30 +54,60 @@ class Menu:
 
             print(f'└{"":─^{width}}┘')
 
+    def input_selection(self) -> int:
+        '''¿?'''
+        selection = input('  ~> ')
+
+        if selection.isdigit():
+            selection = int(selection)
+            if self.start <= selection < self.start + len(self.options):
+                return selection
+
+        print(dye(f'{"Seleção inválida!": >{self.longest_string_len}}', 'red'))
+        return self.input_selection()
+
     def run(self):
-        '''roda menu'''
+        '''¿?'''
         self.show()
+        if self.is_a_void_menu:
+            return False
 
-        if self.void_menu:
-            return
+        selection = self.input_selection()
 
-        sel = input('  ~> ')
+        # saída
+        if selection == self.start + len(self.options)-1:
+            print(dye(
+                f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}', 'red'))
+            return False
 
-        if sel.isdigit():
-            sel = int(sel)
+        # chama uma função
+        list(self.options.items())[selection-self.start][1]()
+        return True
 
-            # Encerra o loop
-            if sel == self.start + len(self.options)-1:
-                print(red(
-                    f'{list(self.options.items())[sel-self.start][1]: >{self.longest_string_len}}'))
-                return
+    def run_in_loop(self):
+        '''¿?'''
+        while self.run():
+            pass
 
-            # Chama uma função do menu
-            if self.start <= sel < self.start + len(self.options):
-                list(self.options.items())[sel-self.start][1]()
-                self.run()
-                return
+    def run_in_loop2(self):
+        '''¿?'''
+        while self.test():
+            pass
 
-        print(
-            red(f'{"Seleção inválida!": >{self.longest_string_len}}'))
-        self.run()
+    def test(self):
+        '''¿?'''
+        self.show()
+        if self.is_a_void_menu:
+            return False
+
+        selection = self.input_selection()
+
+        # saída
+        if selection == self.start + len(self.options)-1:
+            print(dye(
+                f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}', 'red'))
+            return False
+
+        # chama uma função
+        list(self.options.items())[selection-self.start][1]()
+        return True

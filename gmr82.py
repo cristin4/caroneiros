@@ -3,7 +3,7 @@
 import pickle
 import re
 
-from modules.menu import Menu, red  # corrigir
+from modules.menu import Menu, dye  # corrigir
 from modules.user import User  # corrigir
 from modules.carpool import Carpool  # corrigir
 
@@ -13,7 +13,7 @@ def create_user(username):
     user = User(username)
     user.password = input('Defina uma senha de acesso.\n  ~> ')
 
-    print(red('Usuário cadastrado com sucesso!'))
+    print(dye('Usuário cadastrado com sucesso!', 'red'))
     return user
 
 
@@ -22,42 +22,42 @@ def change_username():
     new_username = input('Defina o novo nome de usuário*.\n  ~> ')
 
     if new_username == active_user.username:
-        print(red('Nome de usuário alterado!'))
+        print(dye('Nome de usuário alterado!', 'red'))
         return
 
     if users.get(new_username):
-        print(red('Nome já utilizado por outro usuário!'))
+        print(dye('Nome já utilizado por outro usuário!'))
         return
 
     users.pop(active_user.username)
     active_user.change_username(new_username)
     users[active_user.username] = active_user
-    print(red('Nome de usuário alterado!'))
+    print(dye('Nome de usuário alterado!'))
 
 
 def change_password():
     '''¿?'''
     new_password = input('Defina a nova senha.\n  ~> ')
     active_user.change_password(new_password)
-    print(red('Senha alterada!'))
+    print(dye('Senha alterada!', 'red'))
 
 
 def edit_profile_attribute():
     '''¿?'''
     key = input('Insira a chave do atributo.\n  ~> ')
     value = input('Defina o valor do atributo. ' +
-                  red(" Obs.: '' para remover.") + '\n  ~> ')
+                  dye(" Obs.: '' para remover.", 'red') + '\n  ~> ')
 
     if value == '':
         value = None
     msg = active_user.profile.edit_attribute(key, value)
-    print(red('Atributo ' + msg + '!'))
+    print(dye('Atributo ' + msg + '!'))
 
 
 def edit_user():
     '''2| Editar perfil do usuário'''
     # show_profile()
-    edit_user_menu.run()
+    edit_user_menu.run_in_loop()
 
 
 def show_profile():
@@ -78,14 +78,14 @@ def show_carpools(keys):
         show_carpool(key)
 
     if total == 0:
-        print(red('Não há caronas disponíveis!'))
+        print(dye('Não há caronas disponíveis!', 'red'))
         return False
 
     if total == 1:
         print(
-            red(f'{total} carona disponível!'))
+            dye(f'{total} carona disponível!', 'red'))
     else:
-        red(f'{total} caronas disponíveis!')
+        dye(f'{total} caronas disponíveis!', 'red')
 
     return True
 
@@ -110,12 +110,12 @@ def create_carpool():
             role = 'passenger'
             passengers_usernames = [active_user.username]
         case _:
-            print(red('Opção inválida!'))
+            print(dye('Opção inválida!', 'red'))
             return
 
     carpool = Carpool(destination, origin, driver_username)
     carpool.status = status
-    carpool.seats_available = int(seats_available) # tratar int
+    carpool.seats_available = int(seats_available)  # tratar int
     carpool.passengers = passengers_usernames
 
     if input('Digite \'ok\' para confirmar a carona ' + status + '*.\n  ~> ').lower() == 'ok':
@@ -123,24 +123,24 @@ def create_carpool():
         carpools[identifier] = carpool
         active_user.rides_history.update({identifier: role})
         print(
-            red('Carona ' + status + '* com sucesso!'))
+            dye('Carona ' + status + '* com sucesso!'))
     else:
         print(
-            red('Carona não ' + status + '*!'))
+            dye('Carona não ' + status + '*!'))
 
 
 def give_this_carpool():
     '''¿?'''
-    reply = input('Será o motorista?' +
-                  red(' Obs.: ≠ para sair.') + '\n  ~> ')
+    response = input('Será o motorista?' +
+                     dye(' Obs.: ≠ para sair.', 'red') + '\n  ~> ')
 
-    print(re.fullmatch(r'([S-s][I-i]*[M-m]*)+', reply))
+    print(re.fullmatch(r'([S-s][I-i]*[M-m]*)+', response))
 
 
 def hitch_a_carpool(user, carpool_key):
     '''¿?'''
     if carpools[carpool_key].driver is None:
-        print(red('sapoha ainda nao tem motorista, deseja dirigir?') + '\n  ~> ')
+        print(dye('sapoha ainda nao tem motorista, deseja dirigir?', 'red') + '\n  ~> ')
         give_this_carpool()
         return
 
@@ -154,7 +154,7 @@ def hitch_a_carpool(user, carpool_key):
 def find_ride():
     '''7| Procurar carona'''
     match input(
-            'Vizualizar caronas ofertadas ou solicitas? ' + red('[o/s]') + '\n  ~> ').lower():
+            'Vizualizar caronas ofertadas ou solicitas? ' + dye('[o/s]', 'red') + '\n  ~> ').lower():
         case 'o':
             status = 'offered'
         case 's':
@@ -162,7 +162,7 @@ def find_ride():
         case 'all':
             status = None
         case _:
-            print(red('Opção inválida!'))
+            print(dye('Opção inválida!', 'red'))
             return
 
     keys = carpools_by_status(status)
@@ -171,7 +171,7 @@ def find_ride():
         return
 
     key = input('Digite o imenso identificador da carona para pegá-la.' +
-                red(' Obs.: ≠ para sair.') + '\n  ~> ')
+                dye(' Obs.: ≠ para sair.') + '\n  ~> ')
 
     key = re.sub(r'[\D]+', '', key)
 
@@ -187,7 +187,7 @@ def rate_profile():
         'Qual sua nota, de 0 a 5, para o usuário <?>?\n  ~> ')
 
     print(
-        red('Perfil avaliado com sucesso!'))
+        dye('Perfil avaliado com sucesso!', 'red'))
 
 
 def contribute():
@@ -198,7 +198,7 @@ def contribute():
         'Qual o valor da contribuição, em BRL?\n  ~> ')
 
     print(
-        red('Contribuição destinada a <?> com sucesso!'))
+        dye('Contribuição destinada a <?> com sucesso!', 'red'))
 
 
 def sign_up():
@@ -206,7 +206,7 @@ def sign_up():
 
     username = input('Defina um nome de usuário*.\n  ~> ')
     if users.get(username):
-        print(red('Usuário já cadastrado!'))
+        print(dye('Usuário já cadastrado!', 'red'))
         return
 
     global active_user  # corrigir
@@ -217,56 +217,53 @@ def sign_up():
 
 def unsign():
     '''¿?'''
-    
-    username = input('Defina um nome de usuário*.\n  ~> ')
-    if users.get(username):
-        print(red('Usuário já cadastrado!'))
-        return
-
-    global active_user  # corrigir
-    active_user = create_user(username)
-    users[active_user.username] = active_user
-    access(active_user) 
+    response = input('Confirma a desinscrição do usuário? ' + dye('[s]', 'red') + '\n  ~> ')
+    if response[0].lower() == 's':
+        # delete_user(active_user)
+        del users[active_user.username]
+        return True
+    return None
 
 
 def access(user):
     '''¿?'''
-    print(red(f'Olá, {user.username}!'))
+
+    print(dye(f'Olá, {user.username}!', 'red'))
     print(user.tuple_attributes())
-    user_menu.run()
+    user_menu.run_in_loop()
 
 
 def sign_in():
     '''¿?'''
     username = input('Nome de usuário.\n  ~> ')
-    password = input('Senha de acesso.\n  ~> ')
 
-    global active_user  # corrigir
-    try:
-        if password == users[username].password:
+    if username in users:
+        password = input('Senha de acesso.\n  ~> ')
+        global active_user  # corrigir
+        if users[username].password == password:
             active_user = users[username]
             access(active_user)
         else:
-            print(red('Senha inválida!'))
-    except KeyError:
-        print(red('Usuário não cadastrado!'))
+            print(dye('Senha inválida!', 'red'))
+    else:
+        print(dye('Usuário não cadastrado!', 'red'))
 
 
 def debug():
     '''¿?'''
-    debug_menu.run()
+    debug_menu.run_in_loop()
 
 
 def list_all_users():
     '''¿?'''
     User.list_users_in(users)
-    print(red(f'{len(users)}'))
+    print(dye(f'{len(users)}', 'red'))
 
 
 def list_all_carpools():
     '''¿?'''
     Carpool.list_carpools_in(carpools)
-    print(red(f'{len(carpools)}'))
+    print(dye(f'{len(carpools)}', 'red'))
 
 
 def carpools_by_status(status=None):
@@ -287,9 +284,10 @@ def write_pkl_users():
     with open('io/users.pkl', 'wb') as pickle_file:
         pickle.dump(users, pickle_file)
 
+
 def read_pkl_users():
     '''¿?'''
-    global users # corrigir
+    global users  # corrigir
     with open('io/users.pkl',  'rb') as pickle_file:
         users = pickle.load(pickle_file)
 
@@ -299,9 +297,10 @@ def write_pkl_carpools():
     with open('io/carpools.pkl', 'wb') as pickle_file:
         pickle.dump(carpools, pickle_file)
 
+
 def read_pkl_carpools():
     '''¿?'''
-    global carpools # corrigir
+    global carpools  # corrigir
     with open('io/carpools.pkl', 'rb') as pickle_file:
         carpools = pickle.load(pickle_file)
 
@@ -325,11 +324,11 @@ sign_menu = Menu('sign_menu',
 debug_menu = Menu('DEBUG_menu',
                   {
                       'list all users': list_all_users,
-                    #   'write dict users': write_dict_users,
-                    #   'read dict users': read_dict_users,
+                      #   'write dict users': write_dict_users,
+                      #   'read dict users': read_dict_users,
                       'list all carpools': list_all_carpools,
-                    #   'write dict carpools': write_dict_carpools,
-                    #   'read dict carpools': read_dict_carpools,
+                      #   'write dict carpools': write_dict_carpools,
+                      #   'read dict carpools': read_dict_carpools,
                       '↩': 'see you soon…'
                   })
 
@@ -351,7 +350,7 @@ edit_user_menu = Menu('edit_user_menu',
                           'Alterar nome de usuário': change_username,
                           'Alterar senha': change_password,
                           'Editar atributo': edit_profile_attribute,
-                          'Desinscrever-se': unsign,
+                          'Desinscrever-se*': unsign,
                           'Retornar': 'Retornando…'
                       })
 
@@ -362,19 +361,19 @@ if __name__ == '__main__':
     if BOOL:
         try:
             read_pkl_users()
-            print(red('Carregando usuários…'))
+            print(dye('Carregando usuários…', 'blue'))
             read_pkl_carpools()
-            print(red('Carregando caronas…'))
+            print(dye('Carregando caronas…', 'blue'))
         except FileNotFoundError:
             pass
 
-    sign_menu.run()
+    sign_menu.run_in_loop()
 
     if BOOL:
         try:
             write_pkl_users()
-            print(red('Salvando usuários…'))
+            print(dye('Salvando usuários…', 'blue'))
             write_pkl_carpools()
-            print(red('Salvando caronas…'))
+            print(dye('Salvando caronas…', 'blue'))
         except FileNotFoundError:
             pass
