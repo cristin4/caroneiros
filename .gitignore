@@ -16,6 +16,6 @@ __pycache__/*
 # others
 #gmr82.py
 #*.json
-#drafts/*
+drafts/*
 *.ipynb
-*.pkl
+#*.pkl
