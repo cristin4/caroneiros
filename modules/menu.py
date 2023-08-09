@@ -89,16 +89,11 @@ class Menu:
         while self.run():
             pass
 
-    def run_in_loop2(self):
-        '''¿?'''
-        while self.test():
-            pass
-
     def test(self):
         '''¿?'''
         self.show()
         if self.is_a_void_menu:
-            return False
+            return None
 
         selection = self.input_selection()
 
@@ -106,8 +101,8 @@ class Menu:
         if selection == self.start + len(self.options)-1:
             print(dye(
                 f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}', 'red'))
-            return False
+            return None
 
         # chama uma função
         list(self.options.items())[selection-self.start][1]()
-        return True
+        return self.test()
