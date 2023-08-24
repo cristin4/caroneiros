@@ -116,7 +116,7 @@ def create_carpool():
     carpool = Carpool(destination, origin, driver_username)
     carpool.status = status
     carpool.seats_available = int(seats_available)  # tratar int
-    carpool.passengers = passengers_usernames
+    carpool.passengers_usernames = passengers_usernames
 
     if input('Digite \'ok\' para confirmar a carona ' + status + '*.\n  ~> ').lower() == 'ok':
         identifier = carpool.identifier
@@ -308,7 +308,7 @@ def read_pkl_carpools():
 # ###############################################################
 # import gmr82 as gmr
 
-active_user = None
+active_user: User
 users = {}
 carpools = {}
 
