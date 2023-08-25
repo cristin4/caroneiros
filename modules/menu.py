@@ -7,6 +7,7 @@
 
 def dye(string, color=None):
     '''colore a string'''
+
     ansicolors = {
         'black': '\33[0;30m',
         'red': '\33[0;31m',
@@ -24,9 +25,9 @@ def dye(string, color=None):
 class Menu:
     '''rascunho da classe menu'''
 
-    def __init__(self, header='menu', options=None, start=1):
+    def __init__(self, header='menu', options={}, start=1):
         self.header = header
-        self.options = options
+        self.options: dict = options
         self.start = start
         self.longest_string_len = len(self.header)
         self.is_a_void_menu = self.options is None

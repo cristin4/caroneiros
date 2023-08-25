@@ -128,27 +128,43 @@ def create_carpool():
         print(
             dye('Carona não ' + status + '*!'))
 
+""" 
+# def give_this_carpool(carpool_key):
+#     '''¿?'''
+#     response = input('Será o motorista?' +
+#                      dye(' Obs.: ≠ para sair.', 'red') + '\n  ~> ')
 
-def give_this_carpool():
-    '''¿?'''
-    response = input('Será o motorista?' +
-                     dye(' Obs.: ≠ para sair.', 'red') + '\n  ~> ')
-
-    print(re.fullmatch(r'([S-s][I-i]*[M-m]*)+', response))
-
+#     print(re.fullmatch(r'([S-s][I-i]*[M-m]*)+', response))
+ """
 
 def hitch_a_carpool(user, carpool_key):
     '''¿?'''
-    if carpools[carpool_key].driver is None:
-        print(dye('sapoha ainda nao tem motorista, deseja dirigir?', 'red') + '\n  ~> ')
-        give_this_carpool()
-        return
+    carpool = carpools[carpool_key]
+    if carpool.driver_username is None:
+        if input(dye('Sapoha ainda não tem motorista!', 'red') + '\n' + 'Digite \'m\' para se tornar o motorista.\n  ~> ').lower() == 'm':
+            seats_available = int(input('Quantas vagas disponíveis?\n  ~> '))
+            status = 'offered'
+            if input('Digite \'ok\' para confirmar a carona ' + status + '*.\n  ~> ').lower() == 'ok':
+                carpool.driver_username = active_user.username
+                carpool.status = status
+                carpool.seats_available = seats_available + carpool.seats_available
+                active_user.rides_history.update({carpool_key: 'driver'})
+                print(
+                    dye('Carona ' + status + '* com sucesso!'))
+            
 
-    # solicitar ao motorista?
-
+            return
+    
+    if input('Digite \'ok\' para tomar a carona.\n  ~> ').lower() == 'ok':
+        carpool.seats_available -= 1
+        carpool.passengers_usernames.append(user.username)
+        role = 'passenger'
+        active_user.rides_history.update({carpool_key: role})
+        print(
+            dye('Carona tomada com sucesso!'))
     else:
-        pass  # acicionar como motor
-    print(user.tuple_attributes(), carpool_key)
+        print(
+            dye('Carona não tomada!'))
 
 
 def find_ride():
@@ -169,11 +185,11 @@ def find_ride():
 
     if not show_carpools(keys):
         return
-
+    
     key = input('Digite o imenso identificador da carona para pegá-la.' +
-                dye(' Obs.: ≠ para sair.') + '\n  ~> ')
+                    dye(' Obs.: ≠ para sair.') + '\n  ~> ')
 
-    key = re.sub(r'[\D]+', '', key)
+    # key = re.sub(r'[\D]+', '', key) # corrigir filtro para manter apenas letras e números
 
     if key in keys:
         hitch_a_carpool(active_user, key)
@@ -196,7 +212,7 @@ def contribute():
     driver_user = input('Qual o ID do destinatário da contribuição?\n  ~> ')
     profile_rating_score = input(
         'Qual o valor da contribuição, em BRL?\n  ~> ')
-
+    raise NotImplementedError
     print(
         dye('Contribuição destinada a <?> com sucesso!', 'red'))
 
@@ -229,7 +245,7 @@ def access(user):
     '''¿?'''
 
     print(dye(f'Olá, {user.username}!', 'red'))
-    print(user.tuple_attributes())
+    # print(user.tuple_attributes())
     user_menu.run_in_loop()
 
 
@@ -306,7 +322,6 @@ def read_pkl_carpools():
 
 
 # ###############################################################
-# import gmr82 as gmr
 
 active_user: User
 users = {}

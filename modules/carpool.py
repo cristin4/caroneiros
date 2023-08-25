@@ -10,7 +10,7 @@ from dataclasses import dataclass
 @dataclass
 class Ride:
     '''¿?'''
-    date: datetime  # ¿data? da corrida
+    date: datetime|None  # ¿data? da corrida
     origin: str
     destination: str
 
@@ -18,12 +18,12 @@ class Ride:
 class Carpool:
     '''rascunho da classe carona'''
 
-    def __init__(self, destination, origin, driver_username=None, status='?'):
+    def __init__(self, destination, origin, driver_username=None, status=None):
         self.__identifier = str(uuid4())[0:5] # ¿?
         self.ride = Ride(date=None, destination=destination, origin=origin)
-        self.driver_username: str = driver_username
+        self.driver_username: str|None = driver_username
         self.seats_available: int = 0  # assentos disponíveis
-        self.status: Literal['demanded', 'offered', 'fulled'] = status
+        self.status: Literal['demanded', 'offered', 'fulled']|None = status
         self.passengers_usernames: list  # lista de ¿caroneiros?
 
     @staticmethod

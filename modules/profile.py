@@ -5,7 +5,7 @@ class Profile:
     '''rascunho da classe perfil'''
 
     def __init__(self):
-        self.attributes = {}
+        self.attributes: dict = {}
 
     def get_attributes(self):
         '''¿?'''
