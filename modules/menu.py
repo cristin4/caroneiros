@@ -4,6 +4,7 @@
 # ═║╔╗╚╝╠╣╦╩╬
 # ─│┌┐└┘├┤┬┴┼
 # ─║╓╖╙╜╟╢╥╨╫
+from dataclasses import dataclass
 
 
 def dye(string: str, color: str | None = None) -> str:
@@ -23,34 +24,44 @@ def dye(string: str, color: str | None = None) -> str:
     return ansicolors[color] + string + '\033[0;0m'
 
 
+@dataclass
+class Option:
+    '''rascunho da classe opção'''
+    text: str|None = None  # texto da opção
+    # func: function = function()
+    keep: bool = False
+
+
 class Menu:
     '''rascunho da classe menu'''
 
-    def __init__(self, options: dict|None=None, title: str='menu', start: int=1, invalid_selection: str|None=None) -> None:
+    def __init__(self, options: dict|None=None, options2: list|None=None, title: str='menu', start: int=1, invalid_selection_text: str|None=None) -> None:
         self.title: str = title
         self.options: dict = {} if options is None else options
+        self.options2: list = list() if options2 is None else options2
         self.start: int = start
-        self.empty_menu: bool = bool(self.options) is False
-        self.invalid_selection: str = invalid_selection if invalid_selection else ''
+        self.invalid_selection_text: str = invalid_selection_text if invalid_selection_text else ''
 
-        if self.empty_menu:
+        if self.is_empty():
             self.options.update({'↩': '∅'})
-            self.empty_menu = False
+            self.options2.append(('↩', '∅', False))
 
-        self.longest_string_len: int = len(self.title) if self.empty_menu else len(
-            max(list(self.options.keys()), key=len)) + 5
+        self.longest_string_len: int = len(max(list(self.options.keys(),), key=len)) + 5
+
+        if len(self.title) > self.longest_string_len:
+            self.longest_string_len = len(self.title)
 
     def __repr__(self) -> str:
         string = f'Menu(title={self.title}, '
         string += f'options={self.options}, '
+        string += f'options2={self.options2}, '
         string += f'start={self.start}, '
-        string += f'empty_menu={self.empty_menu}, '
-        string += f'longest_string_len={self.longest_string_len})'
+        string += f'longest_string_len={self.longest_string_len}, '
+        string += f'invalid_selection_text={self.invalid_selection_text})'
         return string
 
     def show_options(self) -> None:
         '''mostra opcões'''
-
         width = self.longest_string_len
         print(f'┌{"":─^{width}}┐',
               f'│{self.title: ^{width}}│',
@@ -61,7 +72,7 @@ class Menu:
 
         print(f'└{"":─^{width}}┘')
 
-    def input_selection(self) -> int:
+    def get_selection(self) -> int:
         '''lê seleção'''
 
         selection = input('  ~> ')
@@ -70,29 +81,30 @@ class Menu:
             selection = int(selection)
             if self.start <= selection < self.start + len(self.options):
                 return selection
-
-        print(
-            dye(f'{f"{self.invalid_selection}": >{self.longest_string_len}}', 'red'))
-        return self.input_selection()
+            
+        string = f'{f"{self.invalid_selection_text}": >{self.longest_string_len}}'
+        print(dye(string, 'red'))
+        return self.get_selection()
 
     def run(self) -> bool:
         '''roda menu'''
 
         self.show_options()
-        if self.empty_menu:
+
+        if self.is_empty():
             return False
 
-        selection = self.input_selection()
+        selection = self.get_selection()
 
         # saída
         if selection == self.start + len(self.options) - 1:
-            print(dye(
-                    f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}', 'yellow'))
+            string = f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}'
+            print(dye(string, 'yellow'))
             return False
 
         # chama uma função
-        list(self.options.items())[selection-self.start][1]()
-        return True
+        keep = list(self.options.items())[selection-self.start][1]()
+        return keep
 
     def run_in_loop(self) -> None:
         '''roda menu em loop'''
@@ -105,17 +117,52 @@ class Menu:
 
         self.show_options()
 
-        if self.empty_menu:
+        if self.is_empty():
             return None
 
-        selection = self.input_selection()
+        selection = self.get_selection()
 
         # saída
         if selection == self.start + len(self.options) - 1:
-            print(dye(
-                    f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}', 'yellow'))
+            string = f'{list(self.options.items())[selection-self.start][1]: >{self.longest_string_len}}'
+            print(dye(string, 'yellow'))
             return None
 
         # chama uma função
         list(self.options.items())[selection-self.start][1]()
         return self.run_recursively()
+
+    def is_empty(self) -> bool:
+        return (bool(self.options) is False) or (bool(self.options2) is False)
+    
+    def show_options2(self) -> None:
+        width = self.longest_string_len
+        print(f'┌{"":─^{width}}┐',
+              f'│{self.title: ^{width}}│',
+              f'├{"":─^{width}}┤', sep='\n')
+
+        for index, (text, func, keep) in enumerate(self.options2, start=self.start):
+            print(f'│{f" {index: 2} {text} ":<{width}}│')
+
+        print(f'└{"":─^{width}}┘')
+    
+    def run2(self) -> bool:
+
+        self.show_options2()
+
+        sel = self.get_selection()
+
+        # saída
+        if sel == self.start + len(self.options2) - 1:
+            string = f'{self.options2[sel-self.start][1]: >{self.longest_string_len}}'
+            print(string)
+            print(dye(
+                string, 'yellow'))
+            print(self.options2[sel-self.start][2])
+            
+            return False
+
+        # chama uma função
+        keep = self.options2[sel-self.start][1]()
+        return keep
+    

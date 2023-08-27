@@ -4,14 +4,9 @@ import re
 import os # corrigir (mkdir)
 import pickle
 
-from modules.menu import Menu, dye  # corrigir
+from modules.menu import * # corrigir
 from modules.user import User # corrigir
 from modules.carpool import Carpool  # corrigir
-
-
-def create_user(username: str, password: str|None) -> User:
-    '''1| Criar usuário'''
-    return User(username, password)
 
 
 def change_username():
@@ -51,19 +46,23 @@ def edit_profile_attribute():
     msg = active_user.profile.update_attribute(key, value)
     print(dye('Atributo ' + msg + '!'))
 
+
 def clear_history():
     active_user.clear_rides_history()
     print(dye('Histórico de caronas removido!', 'red'))
 
-def edit_user():
+
+def edit_user() -> bool:
     '''2| Editar perfil do usuário'''
     # show_profile()
     edit_user_menu.run_in_loop()
+    return True
 
 
-def show_profile() -> None:
+def show_profile() -> bool:
     '''Mostrar perfil'''
     active_user.show_profile()
+    return True
 
 
 def show_carpools(keys: set) -> bool:
@@ -127,40 +126,40 @@ def create_carpool():
             dye('Carona não ' + status + '*!', 'red'))
 
 
-""" 
-def give_this_carpool(carpool_key):
-    '''¿?'''
-    response = input('Será o motorista?' +
-                     dye(' Obs.: ≠ para sair.', 'red') + '\n  ~> ')
-
-    print(re.fullmatch(r'([S-s][I-i]*[M-m]*)+', response))
- """
-
-
-def hitch_a_carpool(user, carpool_key):
+def hitch_a_carpool(user, carpool_key: str):
     '''¿?'''
     carpool: Carpool = carpools[carpool_key]
-    if carpool.driver_username is None:
-        if input(dye('Sapoha ainda não tem motorista!', 'red') + '\n' +
-                'Digite \'m\' para se tornar o motorista.\n  ~> ').lower() == 'm':
-            seats_provided = int(input('Quantas vagas deseja disponibilizar?\n  ~> '))
-            if seats_provided < len(carpool.passengers_usernames):
-                print(dye('Quantidade insuficiente para a demanda!', 'red'))
-                return
-            status = 'offered'
-            carpool.show_me()
-            if input('Digite \'ok\' para confirmar a carona ' +
-                     status + '*.\n  ~> ').lower() == 'ok':
-                carpool.driver_username = active_user.username
-                carpool.status = status
-                carpool.seats_provided = seats_provided
-                active_user.rides_history.update({carpool_key: 'driver'})
-                print(dye('Carona ' + status + '* com sucesso!', 'red'))
+    if not carpool.has_driver() and input(dye('Sapoha ainda não tem motorista!', 'red') + '\n' +
+        'Digite \'m\' para se tornar o motorista.\n  ~> ').lower() == 'm':
+        seats_provided = int(input('Quantas vagas deseja disponibilizar?\n  ~> '))
+        if seats_provided < len(carpool.passengers_usernames):
+            print(dye(
+                'Quantidade insuficiente para a demanda! (mín.: ' + str(len(carpool.passengers_usernames)) + ' vagas)', 'red'))
             return
-        
+        status = 'offered'
+        if input('Digite \'ok\' para confirmar a carona ' +
+                 status + '*.\n  ~> ').lower() == 'ok':
+            carpool.driver_username = active_user.username
+            carpool.status = status
+            carpool.seats_provided = seats_provided
+            active_user.rides_history.update({carpool_key: 'driver'})
+            carpool.show_me()
+            print(dye(
+                'Carona ' + status + '* com sucesso!', 'red'))
+            return
+
+    if carpool.driver_is(active_user.username):
+        print(dye('Você é o motorista da carona!', 'red'))
+        return
+    
+    if active_user.username in carpool.passengers_usernames:
+        print(dye('Você já é passageiro da carona!', 'red'))
+        return
+    
     if not carpool.has_vacancy():
         print(dye('Não há vagas!', 'red'))
         return
+    
     if input('Digite \'ok\' para tomar a carona.\n  ~> ').lower() == 'ok':
         carpool.passengers_usernames.append(user.username)
         role = 'passenger'
@@ -223,18 +222,27 @@ def contribute():
         dye('Contribuição destinada a <?> com sucesso!', 'red'))
 
 
-def sign_up() -> None:
+def sign_up() -> bool:
     '''cadastrar'''
     username = input('Defina um nome de usuário.\n  ~> ')
     if users.get(username):
         print(dye('Nome de usuário já cadastrado!', 'red'))
-        return
+        return True
     password = input('Defina uma senha de acesso.\n  ~> ')
-    global active_user  # corrigir
-    active_user = create_user(username, password)
-    users[active_user.username] = active_user
-    print(dye('Usuário cadastrado com sucesso!', 'red'))
-    access(active_user)
+
+    user = User(username, password)
+    print(user)
+    response = input('Confirma a inscrição do usuário? ' +
+                     dye('[s]', 'red') + '\n  ~> ')
+    if response[0].lower() == 's':
+        users[user.username] = user
+        print(dye('Usuário cadastrado com sucesso!', 'red'))
+        global active_user  # corrigir
+        active_user = user
+        access(active_user)
+    else:
+        print(dye('Cadastrado cancelado!', 'red'))
+    return True
 
 
 def unsign():
@@ -244,8 +252,8 @@ def unsign():
     if response[0].lower() == 's':
         # delete_user(active_user)
         del users[active_user.username]
-        return True
-    return None
+        return False
+    return True
 
 
 def access(user: User) -> None:
@@ -254,39 +262,43 @@ def access(user: User) -> None:
     user_menu.run_in_loop()
 
 
-def sign_in() -> None:
+def sign_in() -> bool:
     '''login'''
     username = input('Nome de usuário.\n  ~> ')
     if not username in users:
         print(dye('Usuário não cadastrado!', 'red'))
-        return
+        return True
     
     password = input('Senha de acesso.\n  ~> ')
     if password != users[username].password:
         print(dye('Senha inválida!', 'red'))
-        return
+        return True
     
     global active_user  # corrigir
 
     active_user = users[username]
     access(active_user)
+    return True
 
 
-def debug():
+def debug() -> bool:
     '''¿?'''
     debug_menu.run_in_loop()
+    return True
 
 
-def list_all_users() -> None:
+def list_all_users() -> bool:
     '''¿?'''
     User.list_users_in(users)
     print(dye(f'{len(users)}', 'red'))
+    return True
 
 
-def list_all_carpools() -> None:
+def list_all_carpools() -> bool:
     '''¿?'''
     Carpool.list_carpools_in(carpools)
     print(dye(f'{len(carpools)}', 'red'))
+    return True
 
 
 def carpools_by_status(status: str|None=None) -> set:
@@ -342,7 +354,7 @@ sign_menu = Menu(title='Menu: Início', options={
     'Entrar': sign_in,
     'DEBUG': debug,
     'Encerrar': 'Encerrando…'
-}, invalid_selection='Seleção inválida!')
+}, invalid_selection_text='Seleção inválida!')
 
 debug_menu = Menu(title='Menu: DEBUG', options={
     'list all users': list_all_users,
@@ -352,7 +364,7 @@ debug_menu = Menu(title='Menu: DEBUG', options={
     #   'write dict carpools': write_dict_carpools,
     #   'read dict carpools': read_dict_carpools,
     '↩': 'see you soon…'
-}, invalid_selection='Seleção inválida!')
+}, invalid_selection_text='Seleção inválida!')
 
 user_menu = Menu(title='Menu: Usuário', options={
     'Ver/Editar meu perfil': edit_user,
@@ -363,7 +375,7 @@ user_menu = Menu(title='Menu: Usuário', options={
     #  'Avaliar perfil': rate_profile,
     #  'Valor extra': contribute,
     'Sair': 'Saindo…'
-}, invalid_selection='Seleção inválida!')
+}, invalid_selection_text='Seleção inválida!')
 
 edit_user_menu = Menu(title='Menu: Perfil', options={
     'Mostrar perfil': show_profile,
@@ -373,7 +385,7 @@ edit_user_menu = Menu(title='Menu: Perfil', options={
     'Desinscrever-se*': unsign,
     'Limpar histórico': clear_history,
     'Retornar': 'Retornando…'
-}, invalid_selection='Seleção inválida!')
+}, invalid_selection_text='Seleção inválida!')
 
 # ############################################################### rodando
 

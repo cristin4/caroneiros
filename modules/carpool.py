@@ -10,7 +10,7 @@ from dataclasses import dataclass
 @dataclass
 class Ride:
     '''rascunho da classe corrida'''
-    date: datetime | None  # ¿data? da corrida
+    date: datetime|None  # ¿data? da corrida
     origin: str
     destination: str
 
@@ -68,7 +68,7 @@ class Carpool:
               f'║{f"corrida: {self.ride}":<{width}}║',
               f'║{f"status: {self.status}":<{width}}║',
               f'║{f"motorista: {self.driver_username}":<{width}}║',
-              f'║{f"assentos livres: {self.seats_provided}":<{width}}║',
+              f'║{f"assentos disponibilizados: {self.seats_provided}":<{width}}║',
               f'║{f"passageiros: {self.passengers_usernames}":<{width}}║',
               f'╙{"":─^{width}}╜', sep='\n')
 
