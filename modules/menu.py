@@ -133,7 +133,7 @@ class Menu:
         return self.run_recursively()
 
     def is_empty(self) -> bool:
-        return (bool(self.options) is False) or (bool(self.options2) is False)
+        return (bool(self.options) is False) and (bool(self.options2) is False)
     
     def show_options2(self) -> None:
         width = self.longest_string_len

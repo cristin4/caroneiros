@@ -1,8 +1,8 @@
 ''' alguns testes '''
 
-import re
 import os # corrigir (mkdir)
 import pickle
+import re
 
 from modules.menu import * # corrigir
 from modules.user import User # corrigir
@@ -392,22 +392,29 @@ edit_user_menu = Menu(title='Menu: Perfil', options={
 if __name__ == '__main__':
 
     BOOL = True
+
     if BOOL:
         try:
+            print(dye('Tentando carregar usuários…', 'yellow'))
             read_pkl_users()
-            print(dye('Carregando usuários…', 'blue'))
+            print(dye('Tentando carregar caronas…', 'yellow'))
             read_pkl_carpools()
-            print(dye('Carregando caronas…', 'blue'))
-        except FileNotFoundError:
+        except Exception as e:
+            print(e)
+        else:
+            print(dye('Usuários e caronas carregados com sucesso!', 'blue'))
+        finally:
             pass
 
     sign_menu.run_in_loop()
 
     if BOOL:
-        try:
-            write_pkl_users()
-            print(dye('Salvando usuários…', 'blue'))
-            write_pkl_carpools()
-            print(dye('Salvando caronas…', 'blue'))
-        except FileNotFoundError:
-            pass
+        if not os.path.exists('io'):
+            os.makedirs('io')
+        write_pkl_users()
+        print(dye('Salvando usuários…', 'blue'))
+        write_pkl_carpools()
+        print(dye('Salvando caronas…', 'blue'))
+        # try:
+        # except FileNotFoundError:
+            # pass
