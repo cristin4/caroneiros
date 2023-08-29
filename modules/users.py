@@ -2,6 +2,8 @@
 
 from modules.profile import Profile
 from modules.interfaces import DraftInterface
+from modules.menu import Menu
+from modules.carpool import Carpool, carpools
 
 
 class User(DraftInterface):
@@ -53,6 +55,47 @@ class User(DraftInterface):
     def password_is(self, input: str | None = None) -> bool:
         input = None if input == '' else input
         return input == self.password
+    
+
+    def add_carpool(self, *args) -> None:
+        """
+        adicionar carona
+        """
+        if not args[0] is dict[str, Carpool]:
+            raise NotImplementedError('coleção não passada')
+        _carpools: dict[str, Carpool] = args[0]
+
+        print(_carpools)
+        print(carpools)    
+
+    def find_carpool(self):
+        """
+        encontrar carona
+        """
+        raise NotImplementedError
+
+
+
+    def set_user_menu(self) -> tuple[str, list, str]:
+        """
+        configurar menu de usuário
+        """
+        title = "Menu: Usuário"
+        invalid_selection_text = "Seleção inválida!"
+
+        options = list() # ¿mudar p/ tupla?
+        options.append(("Adicionar carona", self.add_carpool, True, (carpools)))
+        options.append(("Procurar carona", self.find_carpool, True))
+        # options.append(('Sugerir carona', suggest_ride, None))
+        # options.append(('Histórico de caronas', past_rides, None))
+        # options.append(('Avaliar perfil', rate_profile, None))
+        # options.append(('Valor extra', contribute, None))
+        # options.append(("Perfil", profile, True))
+        # options.append(("Conta", account, True))
+        options.append(("Sair", "Saindo…", None))
+
+        return title, options, invalid_selection_text
+            
 
 
 class Admin(User):
@@ -73,6 +116,8 @@ class Regular(User):
         self.profile: Profile = Profile(username)
         self.rides_history: dict = dict()
 
+
+
     def __repr__(self) -> str:
         string = super().__repr__()
         string += f"profile={self.profile}, "
@@ -85,3 +130,7 @@ class Regular(User):
         """
 
         self.rides_history.clear()
+
+
+# ############################################################### variáveis globais
+users: dict[str, Regular] = {}

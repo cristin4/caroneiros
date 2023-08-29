@@ -4,11 +4,12 @@ import os  # corrigir (mkdir)
 import pickle
 import re
 
+from getpass import getpass
+
 from modules.menu import *  # corrigir
 from modules.users import *  # corrigir
 from modules.carpool import Carpool  # corrigir
 
-from getpass import getpass
 
 def change_username():
     """¿?"""
@@ -167,7 +168,7 @@ def hitch_a_carpool(user, carpool_key: str):
         print(dye("Você já é passageiro da carona!", "red"))
         return
 
-    if not carpool.has_vacancy():
+    if not carpool.has_seats_available():
         print(dye("Não há vagas!", "red"))
         return
 
@@ -277,7 +278,7 @@ def unsign():
     return True
 
 
-def access(user: User) -> None:
+def access(user) -> None:
     """acessar"""
     print(dye(f"Olá, {user.username}!", "red"))
     user_menu.run_in_loop()
@@ -366,11 +367,7 @@ def read_pkl_carpools():
 
 
 # ############################################################### variáveis globais
-
 active_user: Regular # | Admin
-users: dict = {}
-carpools: dict = {}
-
 # ############################################################### instanciando os menus
 
 sign_menu = Menu(

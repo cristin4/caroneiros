@@ -119,6 +119,26 @@ class Menu:
         while self.run_once():
             pass
 
+
+    def run_once2(self) -> bool:
+        self.show_options()
+
+        sel = self.get_selection()
+
+        if sel == self.start + len(self.options) - 1:  # saída
+            string = f"{self.options[sel-self.start][1]: >{self.longest_string_len}}"
+            print(dye(string, "yellow"))
+        else:  # chama uma função
+            self.options[sel - self.start][1](self.options[sel - self.start][3])
+
+        return self.options[sel - self.start][2]
+
+    def run_in_loop2(self) -> None:
+        """roda em loop"""
+        while self.run_once2():
+            pass
+
+
     def run_recursively(self) -> bool:
         """roda menu recursivamente"""
 
