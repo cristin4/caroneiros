@@ -1,10 +1,10 @@
 '''módulo de carona'''
 
-
 from datetime import datetime
 from uuid import uuid4
 from typing import Any, Literal
 from dataclasses import dataclass
+from modules.interfaces import DraftInterface
 
 
 @dataclass
@@ -18,7 +18,7 @@ class Ride:
         return f'{self.origin} → {self.destination} ({self.date})'
 
 
-class Carpool:
+class Carpool(DraftInterface):
     '''rascunho da classe carona'''
 
     def __init__(self, destination, origin, driver_username=None, status=None):
@@ -43,15 +43,21 @@ class Carpool:
         '''¿?'''
         return self._identifier
     
-    @staticmethod
-    def list_carpools_in(carpools_dictionary: dict):
-        '''imprime caronas da lista'''
-        for key, value in carpools_dictionary.items():
-            print(key, value)
-
-    def is_in(self, carpools: dict) -> bool:
-        '''verifica se a instancia pertence ao dicionário'''
+    def is_in(self, carpools: list | dict) -> bool:
         return self.identifier in carpools
+
+    @staticmethod
+    def print_from(carpools: list | dict) -> None:
+        if type(carpools) is list:
+            for carpool in carpools:
+                print(carpool)
+        elif type(carpools) is dict:
+            for carpool in carpools.values():
+                print(carpool)
+
+            # for key, value in carpools.items():
+            #     print(key, value)
+    
 
     def show_me(self) -> None:
         '''mostrar-me'''
