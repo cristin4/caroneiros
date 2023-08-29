@@ -58,7 +58,6 @@ class Carpool(DraftInterface):
             # for key, value in carpools.items():
             #     print(key, value)
     
-
     def show_me(self) -> None:
         '''mostrar-me'''
 
@@ -82,19 +81,28 @@ class Carpool(DraftInterface):
         return self.driver_username == driver_username
     
     def update_status(self) -> None:
-        if not self.has_vacancy():
+        if not self.has_seats_available():
             self.status = 'fulled'
     
     def has_driver(self) -> bool:
         return bool(self.driver_username)
     
     def add_passenger(self, passenger_username: str|None) -> None:
-        if self.has_vacancy() and passenger_username:
+        if self.has_seats_available() and passenger_username:
             self._passengers_usernames.append(passenger_username)
 
     @property
     def passengers_usernames(self) -> list:
         return self._passengers_usernames
 
-    def has_vacancy(self) -> bool:
+    def has_seats_available(self) -> bool:
         return len(self.passengers_usernames) < self.seats_provided if self.seats_provided else True
+
+
+# ############################################################### variáveis globais
+carpools: dict[str, Carpool] = {}
+
+# test = Carpool('B', 'A')
+# test2 = Carpool('C', 'B')
+# carpools.update({test.identifier: test})
+# carpools.update({test2.identifier: test2})
