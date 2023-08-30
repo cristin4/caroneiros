@@ -4,6 +4,8 @@ import os  # corrigir (mkdir)
 import pickle
 import re
 
+from getpass import getpass
+
 from modules.menu import Menu, dye  # corrigir
 from modules.users import *  # corrigir
 from modules.carpools import * # corrigir
