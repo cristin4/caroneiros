@@ -1,10 +1,17 @@
-'''módulo de carona'''
+''' módulo de carona '''
 
 from datetime import datetime
 from uuid import uuid4
-from typing import Any, Literal
+from typing import Literal, Any, Union
 from dataclasses import dataclass
 from modules.interfaces import DraftInterface
+
+# #############################WWWWWWWWWWWW################################## variáveis globais
+carpools: dict[str, Any] = {} # | None = None # dict[str, Carpool]
+# test = Carpool('B', 'A')
+# test2 = Carpool('C', 'B')
+# carpools.update({test.identifier: test})
+# carpools.update({test2.identifier: test2})
 
 
 @dataclass
@@ -19,7 +26,7 @@ class Ride:
 
 
 class Carpool(DraftInterface):
-    '''rascunho da classe carona'''
+    ''' rascunho da classe carona '''
 
     def __init__(self, destination, origin, driver_username=None, status=None):
         self._identifier: str = str(uuid4())[0:5]  # ¿?
@@ -58,8 +65,10 @@ class Carpool(DraftInterface):
             # for key, value in carpools.items():
             #     print(key, value)
     
-    def show_me(self) -> None:
-        '''mostrar-me'''
+    def view(self) -> None:
+        """
+        visualizar, porcamente, a carona
+        """
 
         """ attributes = dict(self.__dict__) # gambiarra p/ corrigir
         for key, value in attributes.items():
@@ -97,12 +106,3 @@ class Carpool(DraftInterface):
 
     def has_seats_available(self) -> bool:
         return len(self.passengers_usernames) < self.seats_provided if self.seats_provided else True
-
-
-# ############################################################### variáveis globais
-carpools: dict[str, Carpool] = {}
-
-# test = Carpool('B', 'A')
-# test2 = Carpool('C', 'B')
-# carpools.update({test.identifier: test})
-# carpools.update({test2.identifier: test2})

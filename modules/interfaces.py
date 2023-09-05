@@ -1,5 +1,5 @@
 """módulo de interfaces"""
-from abc import ABC, abstractmethod, abstractstaticmethod
+from abc import ABC, abstractmethod
 
 class DraftInterface(ABC):
 

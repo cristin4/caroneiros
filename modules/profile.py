@@ -1,4 +1,4 @@
-"""módulo de perfil"""
+""" módulo de perfil """
 
 from modules.menu import Menu, dye
 
@@ -27,19 +27,19 @@ class Profile:
         """
         configurar menu de perfil
         """
-        title = "Menu: Usuário"
+        title = "Menu: Perfil"
         invalid_selection_text = "Seleção inválida!"
 
         options = list()  # ¿mudar p/ tupla?
-        # ("Mostrar", show_profile, True),
-        # ("Adicionar/Editar atributo", edit_profile_attribute, True)
+        options.append(("Mostrar", self.view, None))
+        options.append(("Atualizar atributo", self.access_update_attribute, None))
         options.append(("Retornar", "Retornando…", None))
 
         return Menu(title=title, options=options, invalid_selection_text=invalid_selection_text)
     
-    def access_profile_menu(self, *args) -> None:
+    def access_profile_menu(self, *args) -> bool | None:
         return self.profile_menu.run_in_loop()
-    
+
     def update_attribute(self, key: str, value: str | None) -> str:
         """
         atualizar atributo
@@ -57,11 +57,30 @@ class Profile:
             
         return msg
 
-    def view(self) -> None:
+    def access_update_attribute(self, *args) -> bool:
+        key = input("Insira a chave do atributo.\n  ~> ")
+        if key == 'username':
+            print(dye("Altere o username em Conta!", 'red'))
+            return False
+        
+        value = input(
+            "Defina o valor do atributo. "
+            + dye(" Obs.: '' para remover.", "red")
+            + "\n  ~> "
+        )
+
+        if value == "":
+            value = None
+
+        msg = self.update_attribute(key, value)
+        print(dye("Atributo " + msg + "!", 'red'))
+        return True
+        
+    def view(self, *args) -> bool:
         """
         visualizar, porcamente, o perfil
         """
-        width = 30 # valor arbitrário
+        width = 52 # valor arbitrário
         username = self.attributes.get('username')
         print(
             f'╔{"":═^{width}}╗',
@@ -73,3 +92,5 @@ class Profile:
         for key, value in self.attributes.items():
             print(f'║{f" {key}: {value} ":<{width}}║')
         print(f'╚{"":═^{width}}╝')
+
+        return True

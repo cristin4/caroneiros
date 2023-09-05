@@ -1,41 +1,18 @@
-"""alguns testes"""
+""" alguns testes """
 
-import os  # corrigir (mkdir)
+
 import pickle
-import re
+import re # corrigir
 
+from os import path, makedirs
 from getpass import getpass
-
 from modules.menu import Menu, dye  # corrigir
-from modules.users import *  # corrigir
-from modules.carpools import * # corrigir
+from modules.users import User, Regular, Admin, users # corrigir
+from modules.carpools import Carpool, carpools, Any, Union # corrigir
 
+# ########################################################################### variáveis globais
+...
 
-def edit_profile_attribute(): # migrar p/ classe user
-    """¿?"""
-    key = input("Insira a chave do atributo.\n  ~> ")
-    value = input(
-        "Defina o valor do atributo. "
-        + dye(" Obs.: '' para remover.", "red")
-        + "\n  ~> "
-    )
-
-    if value == "":
-        value = None
-
-    msg = active_user.profile.update_attribute(key, value)
-    print(dye("Atributo " + msg + "!"))
-
-
-def clear_history(): # migrar p/ classe user: admin
-    active_user.clear_rides_history()
-    print(dye("Histórico de caronas removido!", "red"))
-
-
-def show_profile() -> bool: # migrar p/ classe profile
-    """Mostrar perfil"""
-    active_user.profile.view()
-    return True
 
 
 def show_carpools(keys: set) -> bool:
@@ -43,7 +20,7 @@ def show_carpools(keys: set) -> bool:
     total = len(keys)
 
     for key in keys:
-        carpools[key].show_me()
+        carpools[key].view()
 
     if total == 0:
         print(dye("Não há caronas disponíveis!", "red"))
@@ -56,9 +33,9 @@ def show_carpools(keys: set) -> bool:
 
     return True
 
-
 def create_carpool():
     """6| Oferecer carona"""
+    raise NotImplementedError
     # ride_date = input('Quando será a viagem?\n  ~> ') # corrigir
     origin = input("Qual o local de partida?\n  ~> ")
     destination = input("Qual o local de destino?\n  ~> ")
@@ -86,7 +63,7 @@ def create_carpool():
     carpool.seats_provided = seats_provided  # tratar int
     carpool.add_passenger(passenger_username)
 
-    carpool.show_me()
+    carpool.view()
     if (
         input("Digite 'ok' para confirmar a carona " + status + "*.\n  ~> ").lower()
         == "ok"
@@ -98,9 +75,9 @@ def create_carpool():
     else:
         print(dye("Carona não " + status + "*!", "red"))
 
-
 def hitch_a_carpool(user, carpool_key: str):
     """¿?"""
+    raise NotImplementedError
     carpool: Carpool = carpools[carpool_key]
     if (
         not carpool.has_driver()
@@ -131,7 +108,7 @@ def hitch_a_carpool(user, carpool_key: str):
             carpool.status = status
             carpool.seats_provided = seats_provided
             active_user.rides_history.update({carpool_key: "driver"})
-            carpool.show_me()
+            carpool.view()
             print(dye("Carona " + status + "* com sucesso!", "green"))
             return
 
@@ -155,9 +132,9 @@ def hitch_a_carpool(user, carpool_key: str):
     else:
         print(dye("Carona não tomada!", "red"))
 
-
 def find_ride() -> None:
     """7| Procurar carona"""
+    raise NotImplementedError
     match input(
         "Vizualizar caronas ofertadas ou demandadas? "
         + dye("[o/d]*", "red")
@@ -191,10 +168,8 @@ def find_ride() -> None:
     if key in keys:
         hitch_a_carpool(active_user, key)
 
-
 # def profile() -> None:
 #     return profile_menu.run_in_loop()
-
 
 def rate_profile():
     """10| Avaliar perfil"""
@@ -203,7 +178,6 @@ def rate_profile():
     profile_rating_score = input("Qual sua nota, de 0 a 5, para o usuário <?>?\n  ~> ")
 
     print(dye("Perfil avaliado com sucesso!", "green"))
-
 
 def contribute():
     """11| Valor extra"""
@@ -214,66 +188,75 @@ def contribute():
     print(dye("Contribuição destinada a <?> com sucesso!", "green"))
 
 
-
+# ######################################################################### funcões: principais
 def sign_up(*args) -> bool:
-    
+    # users: dict[str, Any] = args[0]
+
     username = input("Defina um nome de usuário.\n  ~> ")
-    if users.get(username):
-        print(dye("Nome de usuário já cadastrado!", "red"))
-        return True
     
-    password = getpass("Defina uma senha de acesso.\n  ~> ")
-
-    user = Regular(username, password)
-    print(user)
-        
-    if Menu.confirm("Confirmar o cadastro deste usuário?"):
-        users[user.username] = user
-        print(dye("Usuário cadastrado com sucesso!", "green"))
-        user.access_user_menu()
+    if users.get(username, False):
+        print(dye("Nome de usuário já cadastrado!", "red"))
     else:
-        print(dye("Cadastro cancelado!", "red"))
-
+        password = getpass("Defina uma senha de acesso.\n  ~> ")
+        user = Regular(username, password)
+        if Menu.confirm("Confirmar o cadastro deste usuário?"):
+            users.update({user.username: user})
+            print(dye("Usuário cadastrado com sucesso!", "green"))
+            user.access_user_menu()
+        else:
+            print(dye("Cadastro cancelado!", "red"))
+    
     return True
-
-
-def unsign():
-    """descadastrar"""
-    response = input(
-        "Confirma a desinscrição do usuário? " + dye("[s]", "red") + "\n  ~> "
-    )
-    if response[0].lower() == "s":
-        # delete_user(active_user)
-        del users[active_user.username]
-        return False
-    return True
-
 
 def sign_in(*args) -> bool:
+    # users: dict[str, Any] = args[0]
 
     username: str = input("Nome de usuário.\n  ~> ")
 
-    if not users.get(username):
+    user = users.get(username, False) 
+    if user:
+        password = getpass("Senha de acesso.\n  ~> ")
+        if user.password_is(password):
+            print(dye(f"Olá, {username}!", "red"))
+            user.access_user_menu()
+        else:
+            print(dye("Senha inválida!", "red"))
+    else:
         print(dye("Usuário não cadastrado!", "red"))
-        return True
-
-    password = getpass("Senha de acesso.\n  ~> ")
-
-    if not users[username].password_is(password):
-        print(dye("Senha inválida!", "red"))
-        return True
-    
-    print(dye(f"Olá, {username}!", "red"))
-    users[username].access_user_menu()
 
     return True
 
+def unsign(*args) -> bool:
+    # users: dict[str, Any] = args[0]
 
+    username: str = input("Nome de usuário.\n  ~> ")
+
+    user = users.get(username, False) 
+    
+    if type(user) is Admin:
+        print(dye(f'Administradores não podem ser removidos.', 'red'))
+        return True
+    
+    if user:
+        password = getpass("Senha de acesso.\n  ~> ")
+        if user.password_is(password):
+            if Menu.confirm("Confirmar o descadastro deste usuário?"):
+                del users[user.username]
+                print(dye("Usuário descadastrado com sucesso!", "green"))
+            else:
+                print(dye("Descadastro cancelado!", "red"))
+        else:
+            print(dye("Senha inválida!", "red"))
+    else:
+        print(dye("Usuário não cadastrado!", "red"))
+
+    return True
+
+# ######################################################################## funcões: temporárias
 def debug(*args) -> bool:
     """¿?"""
     debug_menu.run_in_loop()
     return True
-
 
 def print_all_users(*args) -> bool:
     """¿?"""
@@ -281,13 +264,11 @@ def print_all_users(*args) -> bool:
     print(dye(f"{len(users)}", "red"))
     return True
 
-
 def print_all_carpools(*args) -> bool:
     """¿?"""
     Carpool.print_from(carpools)
     print(dye(f"{len(carpools)}", "red"))
     return True
-
 
 def carpools_by_status(status: str | None = None) -> set:
     """filtra burramente as caronas pelo status"""
@@ -302,45 +283,64 @@ def carpools_by_status(status: str | None = None) -> set:
     return keys
 
 
-# ############################################################### funcões p/ salvar em arquivo
+# ########################### funcões: p/ ler/serializar e desserializar/escrever de/em arquivo
+def try_write_pkl_dict(dictionary: dict[str, User|Regular|Admin], path: str) -> None:
+    """ Tentar serializar e escrever dicionário, em arquivo """
+    exception_msg = None
+    try:
+        with open(path, "wb") as pickle_file:
+            print(dye(f"Tentando serializar objeto ({type(dictionary)})…", "yellow"))
+            pickle.dump(dictionary, pickle_file)
+        print(dye(f"Tentando escrever em {path}…", "yellow"))
+    except FileNotFoundError:
+        exception_msg = f"{path} não foi encontrado."
+    except (IOError, OSError) as error:
+        exception_msg = f"Erro de E/S ao escrever em {path}: {error}."
+    except pickle.PicklingError as error:
+        exception_msg = f"Erro ao serializar objeto ({type(dictionary)}): {error}."
+    except MemoryError:
+        exception_msg = f"Erro de falta de memória ao escrever em {path}."
+    except Exception as error:
+        exception_msg = f"Erro desconhecido: {error}."
+    else:
+        print(dye(f"Objeto ({type(dictionary)}) serializado e escrito com sucesso em {path}!", "green"))
+    finally:
+        if exception_msg is not None:
+            print(dye(exception_msg, 'red'))
+
+def try_read_pkl_dict(path: str) -> dict[str, User|Regular|Admin]:
+    """ Tentar ler e desserializar dicionário, de arquivo """
+    exception_msg = None
+    dictionary: dict[str, User|Regular|Admin] = {}
+    try:
+        print(dye(f"Tentando ler de {path}…", "yellow"))
+        with open(path, "rb") as pickle_file:
+            print(dye(f"Tentando desserializar objeto ({type(dictionary)})…", "yellow"))
+            dictionary = pickle.load(pickle_file)
+    except FileNotFoundError:
+        exception_msg = f"{path} não foi encontrado."
+    except EOFError:
+        exception_msg = f"Erro de fim de arquivo ao ler de {path}."
+    except pickle.UnpicklingError as error:
+        exception_msg = f"Erro ao desserializar objeto ({type(dictionary)}): {error}."
+    except Exception as error:
+        exception_msg = f"Erro desconhecido: {error}."
+    else:
+        print(dye(f"Objeto ({type(dictionary)}) lido e desserializado com sucesso de {path}!", "green"))
+    finally:
+        if exception_msg is not None:
+            print(dye(exception_msg, 'red'))
+        return dictionary
 
 
-def write_pkl_users():
-    """¿?"""
-    with open("io/users.pkl", "wb") as pickle_file:
-        pickle.dump(users, pickle_file)
-
-
-def read_pkl_users():
-    """¿?"""
-    global users  # corrigir
-    with open("io/users.pkl", "rb") as pickle_file:
-        users = pickle.load(pickle_file)
-
-
-def write_pkl_carpools():
-    """¿?"""
-    with open("io/carpools.pkl", "wb") as pickle_file:
-        pickle.dump(carpools, pickle_file)
-
-
-def read_pkl_carpools():
-    """¿?"""
-    global carpools  # corrigir
-    with open("io/carpools.pkl", "rb") as pickle_file:
-        carpools = pickle.load(pickle_file)
-
-
-# ############################################################### variáveis globais
-active_user: Regular # | Admin
-# ############################################################### instanciando os menus
-
+# ########################################################################## instanciando menus
 sign_menu = Menu(
     title="Menu: Início",
     options=[
-        ("Inscrever-se", sign_up, None),
-        ("Entrar", sign_in, None),
-        ("DEBUG", debug, None),
+        ("Inscrever-se", sign_up, users),
+        ("Entrar", sign_in, users),
+        (dye("DEBUG", 'red'), debug, None),
+        ("Desinscrever-se", unsign, users),
         ("Encerrar", "Encerrando…", None)
     ], invalid_selection_text="Seleção inválida!")
 
@@ -356,33 +356,29 @@ debug_menu = Menu(
         ("↩", "see you soon…")
     ], invalid_selection_text="Seleção inválida!")
 
-# ############################################################### rodando
+
+# ##################################################################################### rodando
 
 if __name__ == "__main__":
     BOOL = True
 
     if BOOL:
-        try:
-            print(dye("Tentando carregar usuários…", "yellow"))
-            read_pkl_users()
-            print(dye("Tentando carregar caronas…", "yellow"))
-            read_pkl_carpools()
-        except Exception as e:
-            print(e)
-        else:
-            print(dye("Usuários e caronas carregados com sucesso!", "green"))
-        finally:
-            pass
+        users.update(try_read_pkl_dict('io/users.pkl'))
+        carpools.update(try_read_pkl_dict('io/carpools.pkl'))
+
+        if not len(users):
+            built_in_user = Admin('admin', 'admin')
+            users.update({built_in_user.username: built_in_user})
+
+        if not len(carpools):
+            # carpools.update()
+            ...
 
     sign_menu.run_in_loop()
 
     if BOOL:
-        if not os.path.exists("io"):
-            os.makedirs("io")
-        write_pkl_users()
-        print(dye("Salvando usuários…", "blue"))
-        write_pkl_carpools()
-        print(dye("Salvando caronas…", "blue"))
-        # try:
-        # except FileNotFoundError:
-        # pass
+        if not path.exists("io"):
+            makedirs("io")
+
+        try_write_pkl_dict(users, 'io/users.pkl')
+        try_write_pkl_dict(carpools, 'io/carpools.pkl')

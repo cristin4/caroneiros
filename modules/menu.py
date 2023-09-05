@@ -1,4 +1,4 @@
-"""módulo de menu"""
+""" módulo de menu """
 
 
 # ═║╔╗╚╝╠╣╦╩╬
@@ -18,7 +18,7 @@ class Option:
 
 
 class Menu:
-    """rascunho da classe menu"""
+    """ rascunho da classe menu """
 
     def __init__(
         self,
@@ -102,10 +102,11 @@ class Menu:
         else:  # chama uma função
             return self.options[sel - self.start][1](self.options[sel - self.start][2])
 
-    def run_in_loop(self) -> None:
+    def run_in_loop(self) -> bool | None:
         """roda em loop"""
         while self.run_once():
             pass
+        return True
 
 
     def run_recursively(self) -> bool:
